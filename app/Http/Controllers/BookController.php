@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -40,14 +41,13 @@ class BookController extends Controller
         $data = $req->validate([
             'title' => 'required|max:50',
             'condition' => 'required',
-            'price' => 'required|max:5',
-            'created_by' => 'required|max:10'
+            'price' => 'required|max:5'
         ]);
 
         try {
             $sql = 'INSERT INTO books (book_id, created_by, title, condition, price) VALUES (default, ?, ?, ?, ?)';
             //DB::statement($sql, [Auth::id(), ucwords($topic), $data['message']]);
-            DB::statement($sql, [$data['created_by'], ucwords($data['title']), $data['condition'], $data['price']]);
+            DB::statement($sql, [Auth::id(), ucwords($data['title']), $data['condition'], $data['price']]);
             return response()->json(null, 201);
         } catch (Exception $e) {
             return response()->json(['error' => 'Unexpected database failure'],  503);

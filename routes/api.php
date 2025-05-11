@@ -15,7 +15,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('books', 'BookController@get_books');
-Route::get('books/{id}', 'BookController@get_book');
-Route::post('books', 'BookController@post_book');
-Route::put('books/{id}', 'BookController@put_book');
-Route::delete('books/{id}', 'BookController@delete_book');
+
+Route::get('books/{id}', 'BookController@get_book')->middleware('auth:api');
+Route::post('books', 'BookController@post_book')->middleware('auth:api');
+
+Route::group(['middleware' => ['auth:api', 'owner']], function() {
+    Route::put('books/{id}', 'BookController@put_book');
+    Route::delete('books/{id}', 'BookController@delete_book');
+});
+
+Route::post('register', 'Auth\RegisterController@register');
+Route::post('login', 'Auth\LoginController@login');
+Route::post('logout', 'Auth\LoginController@logout');
